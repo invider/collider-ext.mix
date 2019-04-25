@@ -2,8 +2,8 @@
 
 // @depends(/dna/hud/Container)
 const Container = dna.hud.Container
-// @depends(/dna/hud/gadget/ScrollBar)
-const ScrollBar = dna.hud.gadget.ScrollBar
+// @depends(/dna/hud/gadget/Slider)
+const Slider = dna.hud.gadget.Slider
 
 let instances = 0
 const DynamicList = function(dat) {
@@ -21,8 +21,8 @@ const DynamicList = function(dat) {
     this.max = 0
 
     this.itemsPadding = 5
-    this.font = env.hud.preset.font
-    this.baseHeight = env.hud.preset.baseHeight
+    this.font = env.hud.font
+    this.baseHeight = env.hud.baseHeight
 
     this.color = {
         text: '#C0C0C8',
@@ -30,14 +30,14 @@ const DynamicList = function(dat) {
     }
     dna.hud.Container.call(this, dat)
 
-    this.attach(new ScrollBar({
-        name: 'scrollbar',
+    this.attach(new Slider({
+        name: 'slider',
         x: 0,
         y: 0,
         w: 15,
         h: this.h,
         onScroll: (pos) => {
-            this.pos = Math.round(this.scrollbar.pos)
+            this.pos = Math.round(this.slider.pos)
         },
     }))
 
@@ -52,20 +52,20 @@ DynamicList.prototype.resize = function(w, h) {
 }
 
 DynamicList.prototype.adjust = function() {
-    this.scrollbar.h = this.h
-    this.scrollbar.span = this.h/(this.baseHeight + this.itemsPadding)
-    this.scrollbar.step = this.scrollbar.span/2
-    this.scrollbar.max = this.max + 1
-    this.span = Math.floor(this.scrollbar.span)
+    this.slider.h = this.h
+    this.slider.span = this.h/(this.baseHeight + this.itemsPadding)
+    this.slider.step = this.slider.span/2
+    this.slider.max = this.max + 1
+    this.span = Math.floor(this.slider.span)
 }
 
 DynamicList.prototype.adjustPosition = function() {
     if (this.selected >= 0 && this.pos > this.selected) {
         this.pos = this.selected
-        this.scrollbar.pos = this.pos
+        this.slider.pos = this.pos
     } else if (this.pos + this.span - 1 < this.selected) {
         this.pos = this.selected - this.span + 1
-        this.scrollbar.pos = this.pos
+        this.slider.pos = this.pos
     }
 }
 
@@ -77,7 +77,7 @@ DynamicList.prototype.onDblClick = function(x, y, b, e) {
     if (!this.focus) return
 
     const i = this.pos + Math.floor(y/this.itemHeight())
-    if (x > this.scrollbar.w + this.itemsPadding) {
+    if (x > this.slider.w + this.itemsPadding) {
         this.onItemClick(i)
         this.onItemAction(i, 0)
     }
@@ -90,7 +90,7 @@ DynamicList.prototype.onClick = function(x, y, b, e) {
     if (!this.focus) return
 
     const i = this.pos + Math.floor(y/this.itemHeight())
-    if (x > this.scrollbar.w + this.itemsPadding) {
+    if (x > this.slider.w + this.itemsPadding) {
         this.onItemClick(i)
     }
 
@@ -125,7 +125,7 @@ DynamicList.prototype.onKeyDown = function(e) {
 DynamicList.prototype.onKeyUp = function(e) {}
 
 DynamicList.prototype.onMouseWheel = function(d, x, y, e) {
-    if (x <= this.scrollbar.w) return Container.prototype.onMouseWheel.call(this, d, x, y, e)
+    if (x <= this.slider.w) return Container.prototype.onMouseWheel.call(this, d, x, y, e)
     if (d < 0) {
         this.moveCursor(-1)
     } else if (d > 0) {
@@ -138,7 +138,7 @@ DynamicList.prototype.itemHeight = function() {
 }
 
 DynamicList.prototype.drawItem = function(item, i, iy) {
-    const x = this.scrollbar.w + this.itemsPadding
+    let x = this.slider.w + this.itemsPadding
 
     if (i === this.selected) ctx.fillStyle = this.color.selected
     else ctx.fillStyle = this.color.text
@@ -171,10 +171,10 @@ DynamicList.prototype.drawForeground = function() {
 
     // fix position if needed
     if (this.pos > this.max) {
-        this.scrollbar.pos = this.pos
+        this.slider.pos = this.pos
     } else if (this.pos < 0) {
         this.pos = 0
-        this.scrollbar.pos = this.pos
+        this.slider.pos = this.pos
     }
 
     let i = this.pos

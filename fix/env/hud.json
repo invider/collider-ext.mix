@@ -1,0 +1,32 @@
+{
+    "font": "24px zekton",
+    "content": "#93a1a1",
+    "line": 2,
+    "baseHeight": 24,
+
+    "title": {
+        "content": "#FF8000",
+        "font": "36px comic-note-smooth"
+    },
+
+    "button": {
+        "base": "#404040",
+        "content": "#93a1a1",
+        "font": "20px zekton",
+
+        "hover": {
+            "base": "#606060",
+            "content": "#FFFF00",
+            "font": "22px zekton"
+        },
+        "toggled": {
+            "base": "#202020",
+            "content": "#806020",
+            "font": "20px zekton"
+        },
+        "disabled": {
+            "base": "#202020",
+            "content": "#101010"
+        }
+    }
+}

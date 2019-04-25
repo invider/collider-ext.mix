@@ -2,6 +2,7 @@
 
 //@depends(/dna/hud/gadget/Window)
 const Window = dna.hud.gadget.Window
+//@depends(/dna/hud/gadget/DynamicList)
 const DynamicList = dna.hud.gadget.DynamicList
 
 function mark(ch, n) {
@@ -10,16 +11,20 @@ function mark(ch, n) {
     return s
 }
 
-function findName(node, parent) {
+function findName(node, parent, key) {
     if (sys.isObj(node) && node.name) return node.name
 
     let name = 'anonymous'
+    if (key) name = key
+
     if (sys.isFrame(parent)) {
         Object.keys(parent._dir).forEach(k => {
             if (parent[k] === node) name = k
         })
+
     } else if (sys.isArray(parent)) {
         name = '#' + parent.indexOf(node)
+
     } else if (sys.isObj(parent)) {
         Object.keys(parent).forEach(k => {
             if (parent[k] === node) name = k
@@ -28,24 +33,30 @@ function findName(node, parent) {
     return name
 }
 
-function nodeTitle(node, dir, i) {
+function nodeTitle(node, dir, i, key) {
     //let title = '#' + i + ': '
     let title = ''
 
+    if (key) title += key + ': '
+
     if (sys.isFrame(node)) {
-        title += node.name
+        if (node.name !== '/') title += node.name
         if (sys.isFun(node)) title += '()'
         title += '/'
         if (node._ls.length < 7) title += mark('.', node._ls.length)
         else title += '*'
     } else if (sys.isFun(node)) {
-        title += findName(node, dir) + '()'
+        title += findName(node, dir, key) + '()'
     } else if (sys.isObj(node)) {
-        title += '{' + findName(node, dir) + '}'
+        title += '{ ' + findName(node, dir, key) + ' }'
     } else if (sys.isArray(node)) {
-        title += '[' + findName(node, dir) + ']'
+        title += '[ ' + findName(node, dir, key) + ' ]'
     } else {
-        title += findName(node, dir) + ': ' + node
+        if (key) {
+            title += node
+        } else {
+            title += findName(node, dir, key) + ': ' + node
+        }
     }
     return title
 }
@@ -82,29 +93,45 @@ NodeList.prototype.updatePath = function() {
     this.__.status = path
 }
 
-NodeList.prototype.item = function(i) {
-    const dir = this.__.dir
+NodeList.prototype.item = function(i, d) {
+    const dir = d? d : this.__.dir
 
-    if (i === 0) return '..'
+    let sh = 0
+    if (dir.__) {
+        if (i === 0) return {
+            name: '..',
+            node: dir.__,
+        }
+        sh = 1
+    }
 
     if (sys.isFrame(dir)) {
         if (i < 0) {
-            return dir._ls.length + 1
+            return dir._ls.length + sh
         } else {
-            return nodeTitle(dir._ls[i-1], dir, i-1)
+            return {
+                name: nodeTitle(dir._ls[i-sh], dir, i-sh),
+                node: dir._ls[i-sh]
+            }
         }
     } else if (sys.isObj(dir)) {
         const keys = Object.keys(dir)
         if (i < 0) {
-            return dir._ls.length + 1
+            return keys.length + sh
         } else {
-            return nodeTitle(dir._ls[i-1], dir, i-1)
+            return {
+                key: keys[i-sh],
+                name: nodeTitle(dir[keys[i-sh]], dir, i-sh, keys[i-sh]),
+                node: dir[keys[i-sh]],
+            }
         }
     }
 }
 
 NodeList.prototype.onItemAction = function(i, action) {
-    if ((i === 0 && action === 0) || action === 2) {
+    const item = this.item(i)
+
+    if ((item.name === '..' && action === 0) || action === 2) {
         if (this.__.dir.__) {
             // going up the tree
             let pos = 0
@@ -117,16 +144,16 @@ NodeList.prototype.onItemAction = function(i, action) {
             this.__.dir = this.__.dir.__
             this.pos = pos
             this.selected = sel
-            this.scrollbar.pos = pos
+            this.slider.pos = pos
             this.max = this.__.dir._ls.length
             this.updatePath()
             this.adjust()
         }
     } else if (action === 1) {
-        const node = this.__.dir._ls[i-1]
-        log.dump(node)
+        log.out(item.node)
+        log.dump(item.node)
     } else if (action === 3) {
-        const next = this.__.dir._ls[i-1]
+        const next = item.node
         if (next && (sys.isObj(next) || sys.isFrame(next))) {
             const expl = new Explorer({
                 x: this.__.x + this.__.w,
@@ -139,14 +166,14 @@ NodeList.prototype.onItemAction = function(i, action) {
             expl.pane.updatePath()
         }
     } else {
-        const next = this.__.dir._ls[i-1]
+        const next = item.node
         if (next && (sys.isObj(next) || sys.isFrame(next))) {
             this.lastName.push(findName(next))
             this.lastPos.push(this.pos)
             this.lastSelect.push(i)
             this.pos = 0
             this.selected = 0
-            this.scrollbar.pos = 0
+            this.slider.pos = 0
             if (sys.isFrame(next)) {
                 this.__.dir = next
                 this.max = next._ls.length
@@ -169,10 +196,61 @@ NodeList.prototype.onItemAction = function(i, action) {
             this.updatePath()
             this.adjust()
         } else {
-            console.dir(next)
-            console.log('not surveyable')
+            log.out(next)
+            log.dump(next)
+            log.out('not explorable')
         }
     }
+}
+
+function nodeToIcon(item) {
+    const node = item.node
+
+    if (node instanceof HTMLImageElement) return node
+    if (sys.isFrame(node)) {
+        if (item.node.name === '/') return res.icon.home
+        if (item.name === '..') return res.icon.up
+        if (item.name.startsWith('sys')) return res.icon.sys
+        if (item.name.startsWith('lib')) return res.icon.java
+        if (item.name.startsWith('env')) return res.icon.sliders
+        if (item.name.startsWith('res')) return res.icon.art
+        if (item.name.startsWith('dna')) return res.icon.chip
+        if (item.name.startsWith('lab')) return res.icon.robot
+        if (item.name.startsWith('log')) return res.icon.scroll
+        if (item.name.startsWith('mod')) return res.icon.mod
+        if (item.name.startsWith('trap')) return res.icon.joystick
+        return res.icon.folder
+    }
+    if (sys.isFun(node)) {
+        if (/^[A-Z]/.test(item.name)) return res.icon.constructor
+        return res.icon.blocks
+    }
+    if (sys.isObj(node)) return res.icon.object
+    if (sys.isString(node)) return res.icon.text
+    return res.icon.file
+}
+
+NodeList.prototype.drawItem = function(item, i, iy) {
+    let x = this.slider.w + this.itemsPadding
+    const h = this.itemHeight()
+    const iconToTextSpacing = 10
+    const magnify = 3
+
+    if (i === this.selected) {
+        ctx.fillStyle = this.color.selected
+        ctx.drawImage(nodeToIcon(item), x-magnify, iy-magnify, h+magnify*2, h+magnify*2)
+    } else {
+        ctx.fillStyle = this.color.text
+        ctx.drawImage(nodeToIcon(item), x, iy, h, h)
+    }
+
+    x += this.itemHeight() + iconToTextSpacing
+
+    ctx.font = this.font
+    ctx.textBaseline = 'top'
+    ctx.textAlign = "left"
+    ctx.fillText(item.name, x, iy);
+    return h
 }
 
 const defaults = {

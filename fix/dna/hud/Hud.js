@@ -67,6 +67,12 @@ let Hud = function(dat) {
 const Container = dna.hud.Container
 Hud.prototype = Object.create(Container.prototype)
 
+Hud.prototype.style = function(path, source) {
+    source = source? source : this._style
+    source = source? source : env.hud
+    return lib.hud.style(path, source)
+}
+
 Hud.prototype.onMouseDown = function(x, y, b, e) {
     this.captured.forEach(g => {
         if (sys.isFun(g.onMouseDown)) g.onMouseDown(x, y, e)
@@ -124,19 +130,30 @@ Hud.prototype.releaseMouse = function() {
 }
 
 Hud.prototype.captureFocus = function(gadget) {
-    gadget.focus = true
-    if (this.focused.indexOf(gadget) < 0) this.focused.push(gadget)
+    if (this.focused.indexOf(gadget) < 0) {
+        gadget.focus = true
+        gadget.onFocus()
+        this.focused.push(gadget)
+    }
 }
 
 Hud.prototype.releaseFocus = function(gadget) {
-    gadget.focus = false
-    const i = this.focused.indexOf(gadget)
-    if (i >= 0) {
-        this.focused.splice(i, 1)
-    }
+    if (!gadget) {
+        this.focused = []
 
-    if (sys.isFun(gadget.onReleasedFocus)) {
-        gadget.onReleasedFocus()
+    } else if (gadget.focus) {
+        gadget.focus = false
+
+        const i = this.focused.indexOf(gadget)
+        if (i >= 0) {
+            this.focused.splice(i, 1)
+            if (sys.isFun(gadget.onUnfocus)) {
+                gadget.onUnfocus()
+            }
+            if (sys.isFun(gadget.onReleasedFocus)) {
+                gadget.onReleasedFocus()
+            }
+        }
     }
 }
 

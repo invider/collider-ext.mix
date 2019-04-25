@@ -1,33 +1,44 @@
 'use strict'
-// @depends(/env/hud/preset)
+
+// @depends(/env/hud)
 
 let instances = 0
-
 const Label = function Label(dat) {
-    instances ++
-    this.name = 'label_' + instances
+    this.name = 'label' + ++instances
 
     if (!dat) dat = {}
     else if (sys.isString(dat)) dat = { text: dat }
 
     sys.augment(this, dat)
 
-    // preconfigure
-    this.color = env.hud.preset.color
-    this.font = env.hud.preset.font
-
     // must follow preconfigure
     if (dat.text) this.setText(dat.text)
     else this.setText('Label ' + instances)
 }
 
-Label.prototype.setText = function(text) {
-    this.text = text
-    this.th = parseInt(this.font)
+Label.prototype.init = function() {
+    this.setStyle('label')
+}
+
+Label.prototype.setStyle = function(base) {
+    // preconfigure
+    // TODO use addPath function here to properly join
+    this.color = this.__.style(base + '/content')
+    this.font = this.__.style(base + '/font')
+    this.adjust()
+}
+
+Label.prototype.adjust = function() {
     ctx.font = this.font
-    this.tw = ctx.measureText(text).width
+    this.tw = ctx.measureText(this.text).width
+    this.th = parseInt(this.font)
     this.w = this.tw
     this.h = this.th
+}
+
+Label.prototype.setText = function(text) {
+    this.text = text
+    this.adjust()
 }
 
 Label.prototype.draw = function() {

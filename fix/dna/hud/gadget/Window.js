@@ -1,6 +1,6 @@
 'use strict'
 
-//@depends(/env/hud/preset)
+//@depends(/env/hud)
 //@depends(/dna/hud/Container)
 const Container = dna.hud.Container 
 
@@ -13,14 +13,17 @@ const defaults = {
     minifiable: true,
     closable: true,
 
-    font: env.hud.preset.font,
-    baseHeight: env.hud.preset.baseHeight,
+    font: env.hud.font,
+    baseHeight: env.hud.baseHeight,
     color: {
         text: '#d0d9d0',
         tag: '#007060',
+        dtag: '#005040',
         bar: '#202020',
         stretch: '#253030',
         stretchLine: '#556060',
+        close: '#253030',
+        closeLine: '#556060',
     },
     pads: {
         tag: 6
@@ -29,10 +32,13 @@ const defaults = {
 
 const Tag = function(dat) {
     this.name = 'tag'
+    this.keepZ = true
+    sys.augment(this, { x: 0, y: 0, w: 0, h: 0 })
     sys.augment(this, dat)
 }
 Tag.prototype.draw = function() {
-    ctx.fillStyle = this.__.color.tag
+    if (this.__.focus) ctx.fillStyle = this.__.color.tag
+    else ctx.fillStyle = this.__.color.dtag
     ctx.fillRect(this.x, this.y, this.w, this.h)
 
     ctx.fillStyle = this.__.color.text
@@ -45,9 +51,17 @@ Tag.prototype.onMouseDrag = function(dx, dy) {
     this.__.x += dx
     this.__.y += dy
 }
+Tag.prototype.onDblClick = function() {
+    this.__.detach()
+}
+Tag.prototype.onFocus = function() {
+    this.__.captureFocus(this.__.pane)
+}
 
 const Bar = function(dat) {
     this.name = 'bar'
+    this.keepZ = true
+    sys.augment(this, { x: 0, y: 0, w: 0, h: 0 })
     sys.augment(this, dat)
 }
 Bar.prototype.draw = function() {
@@ -60,9 +74,13 @@ Bar.prototype.draw = function() {
     ctx.textAlign = "left"
     ctx.fillText(this.__.status, this.x + this.__.pads.tag, this.y + this.h/2);
 }
+Bar.prototype.onFocus = function() {
+    this.__.captureFocus(this.__.pane)
+}
 
 const Stretch = function(dat) {
     this.name = 'stretch'
+    sys.augment(this, { x: 0, y: 0, w: 0, h: 0 })
     sys.augment(this, dat)
 }
 Stretch.prototype.draw = function() {
@@ -87,7 +105,39 @@ Stretch.prototype.onMouseDrag = function(dx, dy) {
     this.__.adjust()
     return false
 }
+Stretch.prototype.onDblClick = function(dx, dy) {
+    const window = this.__
+    const container = window.__
 
+    window.x = 0
+    window.y = 0
+    window.resize(container.w, container.h)
+}
+
+const Close = function(dat) {
+    this.name = 'close'
+    sys.augment(this, { x: 0, y: 0, w: 0, h: 0 })
+    sys.augment(this, dat)
+}
+Close.prototype.draw = function() {
+    ctx.fillStyle = this.__.color.close
+    ctx.fillRect(this.x, this.y, this.w, this.h)
+
+    ctx.strokeStyle = this.__.color.closeLine
+    ctx.lineWidth = 3
+
+    const d = this.w/4
+
+    ctx.moveTo(this.x+d, this.y+d)
+    ctx.lineTo(this.x+this.w-d, this.y+this.h-d)
+    ctx.moveTo(this.x+this.w-d, this.y+d)
+    ctx.lineTo(this.x+d, this.y+this.h-d)
+    ctx.stroke()
+}
+Close.prototype.onClick = function() {
+    log.out('closing the window ' + this.name)
+    this.__.detach()
+}
 
 let instances = 0
 const Window = function(dat) {
@@ -98,7 +148,8 @@ const Window = function(dat) {
 
     this.attach(new Tag())
     this.attach(new Bar())
-    this.attach(new Stretch())
+    if (this.resizable) this.attach(new Stretch())
+    if (this.closable) this.attach(new Close())
     this.attach(new Container({
         name: 'pane',
         attach: function(node, name) {
@@ -110,21 +161,40 @@ const Window = function(dat) {
 }
 Window.prototype = Object.create(Container.prototype)
 
+Window.prototype.onFocus = function() {
+    this.captureFocus(this.pane)
+}
+
+Window.prototype.resize = function(w, h) {
+    this.w = w
+    this.h = h
+    this.adjust()
+}
+
 Window.prototype.adjust = function() {
     this.tag.x = 0
     this.tag.y = 0
     this.tag.w = this.w
     this.tag.h = this.baseHeight + this.pads.tag*2
 
+    if (this.close) {
+        this.close.y = 0
+        this.close.h = this.tag.h
+        this.close.w = this.close.h
+        this.close.x = this.w - this.bar.h
+    }
+
     this.bar.x = 0
     this.bar.w = this.w
     this.bar.h = this.baseHeight + this.pads.tag*2
     this.bar.y = this.h - this.bar.h
 
-    this.stretch.y = this.bar.y
-    this.stretch.h = this.bar.h
-    this.stretch.x = this.w - this.bar.h
-    this.stretch.w = this.bar.h
+    if (this.stretch) {
+        this.stretch.y = this.bar.y
+        this.stretch.h = this.bar.h
+        this.stretch.x = this.w - this.bar.h
+        this.stretch.w = this.bar.h
+    }
 
     this.pane.x = 0
     this.pane.w = this.w

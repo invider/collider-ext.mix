@@ -2,7 +2,7 @@
 
 // TODO move up the hierarchy, since this is not a gadget by itself
 
-// @depends(/env/hud/preset)
+// @depends(/env/hud)
 // @depends(/dna/hud/Container)
 const Container = dna.hud.Container
 
@@ -54,9 +54,9 @@ Bar.prototype.onMouseDrag = function(dx, dy) {
 }
 
 let instances = 0
-const ScrollBar = function(dat) {
+const Slider = function(dat) {
     instances++
-    this.name = 'scrollbar' + instances
+    this.name = 'slider' + instances
 
     this.clip = false
     this.disabled = false
@@ -76,14 +76,14 @@ const ScrollBar = function(dat) {
     this.barPadding = 2
     dna.hud.Container.call(this, dat)
 
-    const scrollbar = this
+    const slider = this
     this.attach(new Touch({
         name: 'up',
         x: 0,
         y: 0,
         w: this.w,
         h: 0,
-        onClick: () => scrollbar.drag(-this.step),
+        onClick: () => slider.drag(-this.step),
     }))
     this.attach(new Touch({
         name: 'down',
@@ -91,28 +91,30 @@ const ScrollBar = function(dat) {
         y: this.h-40,
         w: this.w,
         h: 0,
-        onClick: () => scrollbar.drag(this.step),
+        onClick: () => slider.drag(this.step),
     }))
     this.attach(new Bar({
         by: this.barPadding,
         x: this.barPadding,
         w: this.w-this.barPadding*2,
+        y: 0,
+        h: 0,
     }))
 }
-ScrollBar.prototype = Object.create(Container.prototype)
+Slider.prototype = Object.create(Container.prototype)
 
-ScrollBar.prototype.onMouseDown = function(x, y, e) {
+Slider.prototype.onMouseDown = function(x, y, e) {
     this.active = true
     this.captureMouse(this)
     Container.prototype.onMouseDown.call(this, x, y, e)
 }
 
-ScrollBar.prototype.onMouseUp = function(x, y, e) {
+Slider.prototype.onMouseUp = function(x, y, e) {
     this.active = false
     Container.prototype.onMouseUp.call(this, x, y, e)
 }
 
-ScrollBar.prototype.onMouseWheel = function(d, x, y, e) {
+Slider.prototype.onMouseWheel = function(d, x, y, e) {
     if (d < 0) {
         this.drag(-this.scrollSpeed)
     } else if (d > 0) {
@@ -120,17 +122,17 @@ ScrollBar.prototype.onMouseWheel = function(d, x, y, e) {
     }
 }
 
-ScrollBar.prototype.drag = function(step) {
+Slider.prototype.drag = function(step) {
     this.pos = lib.math.limit(this.pos+step, 0, this.max-this.span)
     this.onScroll(this.pos)
 }
 
-ScrollBar.prototype.onScroll = function(pos) {}
+Slider.prototype.onScroll = function(pos) {}
 
-ScrollBar.prototype.drawBackground = function() {
+Slider.prototype.drawBackground = function() {
     if (this.active) ctx.fillStyle = '#45454570'
     else ctx.fillStyle = '#40404060'
     ctx.fillRect(0, 0, this.w, this.h)
 }
 
-module.exports = ScrollBar
+module.exports = Slider
