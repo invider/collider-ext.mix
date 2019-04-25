@@ -7,7 +7,7 @@ let Hud = function(dat) {
     dna.hud.Container.call(this, dat)
 
     this.span = true
-    this.opaque = true
+    this.transparent = true
     this.captured = []
     this.focused = []
 
@@ -84,8 +84,8 @@ Hud.prototype.onMouseUp = function(x, y, b, e) {
     this.captured.forEach(g => {
         if (sys.isFun(g.onMouseUp)) g.onMouseUp(x, y, e)
     })
-    this.releaseMouse()
     Container.prototype.onMouseUp.call(this, x, y, b, e)
+    this.releaseMouse()
 }
 
 Hud.prototype.onMouseMove = function(x, y, e) {

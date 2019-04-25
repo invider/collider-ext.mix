@@ -29,6 +29,7 @@ const defaults = {
         tag: 6
     },
 }
+    
 
 const Tag = function(dat) {
     this.name = 'tag'
@@ -37,12 +38,12 @@ const Tag = function(dat) {
     sys.augment(this, dat)
 }
 Tag.prototype.draw = function() {
-    if (this.__.focus) ctx.fillStyle = this.__.color.tag
-    else ctx.fillStyle = this.__.color.dtag
+    if (this.__.focus) ctx.fillStyle = this.__._style.tag.baseHi
+    else ctx.fillStyle = this.__._style.tag.base
     ctx.fillRect(this.x, this.y, this.w, this.h)
 
-    ctx.fillStyle = this.__.color.text
-    ctx.font = this.__.font
+    ctx.fillStyle = this.__._style.tag.content
+    ctx.font = this.__._style.tag.font
     ctx.textBaseline = 'middle'
     ctx.textAlign = "center"
     ctx.fillText(this.__.title, this.w/2,  this.y + this.h/2);
@@ -65,10 +66,10 @@ const Bar = function(dat) {
     sys.augment(this, dat)
 }
 Bar.prototype.draw = function() {
-    ctx.fillStyle = this.__.color.bar
+    ctx.fillStyle = this.__._style.bar.base
     ctx.fillRect(this.x, this.y, this.w, this.h)
 
-    ctx.fillStyle = this.__.color.text
+    ctx.fillStyle = this.__._style.bar.content
     ctx.font = this.__.font
     ctx.textBaseline = 'middle'
     ctx.textAlign = "left"
@@ -84,10 +85,10 @@ const Stretch = function(dat) {
     sys.augment(this, dat)
 }
 Stretch.prototype.draw = function() {
-    ctx.fillStyle = this.__.color.stretch
+    ctx.fillStyle = this.__._style.control.base
     ctx.fillRect(this.x, this.y, this.w, this.h)
 
-    ctx.strokeStyle = this.__.color.stretchLine
+    ctx.strokeStyle = this.__._style.control.content
     ctx.lineWidth = 3
 
     const d = this.w/3
@@ -120,10 +121,10 @@ const Close = function(dat) {
     sys.augment(this, dat)
 }
 Close.prototype.draw = function() {
-    ctx.fillStyle = this.__.color.close
+    ctx.fillStyle = this.__._style.control.base
     ctx.fillRect(this.x, this.y, this.w, this.h)
 
-    ctx.strokeStyle = this.__.color.closeLine
+    ctx.strokeStyle = this.__._style.control.content
     ctx.lineWidth = 3
 
     const d = this.w/4
@@ -160,6 +161,34 @@ const Window = function(dat) {
     this.adjust()
 }
 Window.prototype = Object.create(Container.prototype)
+
+Window.prototype.init = function() {
+    this.injectStyle('window')
+}
+
+Window.prototype.injectStyle = function(b) {
+    const c = this.__
+    this._style = {
+        font: c.style(b + '/font'),
+        content: c.style(b + '/content'),
+        tag: {
+            baseHi: c.style(b + '/tag/base.hi'),
+            base: c.style(b + '/tag/base'),
+            content: c.style(b + '/tag/content'),
+            font: c.style(b + '/tag/font'),
+        },
+        bar: {
+            base: c.style(b + '/bar/base'),
+            content: c.style(b + '/bar/content'),
+            font: c.style(b + '/bar/font'),
+        },
+
+        control: {
+            base: c.style(b + '/control/base'),
+            content: c.style(b + '/control/content'),
+        },
+    }
+}
 
 Window.prototype.onFocus = function() {
     this.captureFocus(this.pane)

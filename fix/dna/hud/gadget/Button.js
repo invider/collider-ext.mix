@@ -22,31 +22,31 @@ const Button = function(dat) {
 }
 
 Button.prototype.init = function() {
-    this.injectStyle()
+    this.injectStyle('button')
 }
 
-Button.prototype.injectStyle = function() {
+Button.prototype.injectStyle = function(base) {
     const c = this.__
     this.color = {
         active: {
-            base: c.style('button/base'),
-            content: c.style('button/content'),
-            font: c.style('button/font'),
+            base: c.style(base + '/base'),
+            content: c.style(base + '/content'),
+            font: c.style(base + '/font'),
         },
         hover: {
-            base: c.style('button/hover/base'),
-            content: c.style('button/hover/content'),
-            font: c.style('button/hover/font'),
+            base: c.style(base + '/hover/base.hi'),
+            content: c.style(base + '/hover/content.hi'),
+            font: c.style(base + '/hover/font.hi'),
         },
         toggled: {
-            base: c.style('button/toggled/base'),
-            content: c.style('button/toggled/content'),
-            font: c.style('button/toggled/font'),
+            base: c.style(base + '/toggled/base.low'),
+            content: c.style(base + '/toggled/content.hi'),
+            font: c.style(base + '/toggled/font.low'),
         },
         disabled: {
-            base: '#202020',
-            content: '#101010',
-            font: c.style('button/disabled/font'),
+            base: c.style(base + '/disabled/base.low'),
+            content: c.style(base + '/disabled/content.low'),
+            font: c.style('button/disabled/font.low'),
         },
     }
 }
@@ -67,6 +67,9 @@ Button.prototype.onMouseDown = function() {
 Button.prototype.onMouseUp = function() {
     this.toggled = false
 }
+
+// to capture mouse
+Button.prototype.onMouseDrag = function() {}
 
 // need this for _hover flag to work
 Button.prototype.onMouseMove = function() {}

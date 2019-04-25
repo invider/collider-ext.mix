@@ -1,32 +1,45 @@
 {
     "font": "24px zekton",
+    "base": "#293030",
+    "base.hi": "#394040",
+    "base.low": "#252929",
+
     "content": "#93a1a1",
+    "content.low": "#586e75",
+    "content.hi": "#b58900",
+    "content.yellow": "#b58900",
+    "content.orange": "#cb4b16",
+    "content.red": "#dc322f",
+    "content.magenta": "#d33682",
+    "content.violet": "#6c71c4",
+    "content.blue": "#268bd2",
+    "content.cyan": "#2aa198",
+    "content.green": "#859900",
+
     "line": 2,
     "baseHeight": 24,
+
+    "background": {
+        "base": "#192020"
+    },
 
     "title": {
         "content": "#FF8000",
         "font": "36px comic-note-smooth"
     },
 
-    "button": {
-        "base": "#404040",
-        "content": "#93a1a1",
-        "font": "20px zekton",
-
-        "hover": {
-            "base": "#606060",
-            "content": "#FFFF00",
-            "font": "22px zekton"
+    "window": {
+        "content": "#d0d9d0",
+        "tag": {
+            "base.hi": "#007060",
+            "base": "#005040"
         },
-        "toggled": {
-            "base": "#202020",
-            "content": "#806020",
-            "font": "20px zekton"
+        "bar": {
+            "base": "#202020"
         },
-        "disabled": {
-            "base": "#202020",
-            "content": "#101010"
+        "control": {
+            "base": "#253030",
+            "content": "#556060"
         }
     }
 }
