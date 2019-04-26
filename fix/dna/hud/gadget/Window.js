@@ -156,7 +156,7 @@ const Window = function(dat) {
         attach: function(node, name) {
             Container.prototype.attach.call(this, node, name)
         },
-        drawBackground: function() {},
+        transparent: true
     }))
     this.adjust()
 }

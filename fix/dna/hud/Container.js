@@ -9,7 +9,7 @@ const defaults = {
         background: '#32323470',
         active:  {
             frame: '#ffff00',
-            background: '#343635A0',
+            background: '#343635B0',
         }
     },
     showActiveFrame: false,
