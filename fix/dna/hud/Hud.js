@@ -11,6 +11,11 @@ let Hud = function(dat) {
     this.captured = []
     this.focused = []
 
+    this.x = 0
+    this.y = 0
+    this.w = ctx.width
+    this.h = ctx.height
+
     //sys.augment(this, dat)
     
     // fix preset if not present
@@ -62,6 +67,8 @@ let Hud = function(dat) {
     sys.after(trap, 'keyUp', function(e) {
         hud.onKeyUp(e)
     })
+
+    this.saveSize()
 }
 
 const Container = dna.hud.Container
@@ -71,6 +78,20 @@ Hud.prototype.style = function(path, source) {
     source = source? source : this._style
     source = source? source : env.hud
     return lib.hud.style(path, source)
+}
+
+Hud.prototype.saveSize = function() {
+    this._w = this.w
+    this._h = this.h
+}
+
+Hud.prototype.isResized = function() {
+    return (this._w !== this.w || this._h !== this.h)
+}
+
+Hud.prototype.adjust = function() {
+    Container.prototype.adjust.call(this)
+    this.saveSize()
 }
 
 Hud.prototype.onMouseDown = function(x, y, b, e) {
@@ -159,6 +180,7 @@ Hud.prototype.releaseFocus = function(gadget) {
 
 Hud.prototype.draw = function() {
     if (this.span) this.expand()
+    if (this.isResized()) this.adjust()
     Container.prototype.draw.call(this)
 }
 

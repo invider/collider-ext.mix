@@ -5,6 +5,8 @@
 let instances = 0
 const Label = function Label(dat) {
     this.name = 'label' + ++instances
+    this.textAlign = "left"
+    this.textBaseline = 'top'
 
     if (!dat) dat = {}
     else if (sys.isString(dat)) dat = { text: dat }
@@ -44,8 +46,8 @@ Label.prototype.setText = function(text) {
 Label.prototype.draw = function() {
     ctx.fillStyle = this.color
     ctx.font = this.font
-    ctx.textAlign = "left"
-    ctx.textBaseline = 'top'
+    ctx.textAlign = this.textAlign
+    ctx.textBaseline = this.textBaseline
     ctx.fillText(this.text, this.x, this.y);
 }
 

@@ -1,13 +1,5 @@
 'use strict'
 
-console.log('============== INFO ==============')
-console.log(_.path())
-console.log(_.__.path())
-console.log(_._$.path())
-console.dir(_)
-console.dir(_.__)
-console.dir(_._$)
-
 return {
     Z: 101,
 
@@ -21,8 +13,6 @@ return {
     smoothing: 0.99,
 
     init: function() {
-        console.log('------------- attached point: ' + this.__.path())
-        console.dir(_)
         this.last = Date.now()
     },
     evo: function(dt) {

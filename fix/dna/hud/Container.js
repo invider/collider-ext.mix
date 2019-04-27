@@ -29,6 +29,16 @@ Container.prototype.style = function(path, source) {
     return this.__.style(path, source)
 }
 
+Container.prototype.layout= function() {}
+
+Container.prototype.adjust = function() {
+    this.layout()
+    for (let i = this._ls.length-1; i >= 0; i--) {
+        const g = this._ls[i]
+        if (sys.isFun(g.adjust)) g.adjust()
+    }
+}
+
 Container.prototype.moveOnTop = function(i) {
     if (i < this._ls.length - 1) {
         const g = this._ls[i]
