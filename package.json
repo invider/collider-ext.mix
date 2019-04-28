@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-      "collider-lib.mix": "git+ssh://git@hub.ikhotin.com:/var/git/collider-lib.mix.git"
+      "collider-lib.mix": "https://github.com/invider/collider-lib.mix.git"
   },
   "author": "Igor Khotin & Co.",
   "license": "BSD-3-Clause"
