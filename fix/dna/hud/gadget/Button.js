@@ -18,40 +18,37 @@ const Button = function(dat) {
     this.fontHeight = env.hud.baseHeight
 
     sys.augment(this, dat)
-    this.adjustSize()
-}
-
-Button.prototype.init = function() {
     this.injectStyle('button')
+    this.adjust()
 }
 
 Button.prototype.injectStyle = function(base) {
-    const c = this.__
+    const s = lib.hud.style
     this.color = {
         active: {
-            base: c.style(base + '/base'),
-            content: c.style(base + '/content'),
-            font: c.style(base + '/font'),
+            base: s(base + '/base'),
+            content: s(base + '/content'),
+            font: s(base + '/font'),
         },
         hover: {
-            base: c.style(base + '/hover/base.hi'),
-            content: c.style(base + '/hover/content.hi'),
-            font: c.style(base + '/hover/font.hi'),
+            base: s(base + '/hover/base.hi'),
+            content: s(base + '/hover/content.hi'),
+            font: s(base + '/hover/font.hi'),
         },
         toggled: {
-            base: c.style(base + '/toggled/base.low'),
-            content: c.style(base + '/toggled/content.hi'),
-            font: c.style(base + '/toggled/font.low'),
+            base: s(base + '/toggled/base.low'),
+            content: s(base + '/toggled/content.hi'),
+            font: s(base + '/toggled/font.low'),
         },
         disabled: {
-            base: c.style(base + '/disabled/base.low'),
-            content: c.style(base + '/disabled/content.low'),
-            font: c.style('button/disabled/font.low'),
+            base: s(base + '/disabled/base.low'),
+            content: s(base + '/disabled/content.low'),
+            font: s('button/disabled/font.low'),
         },
     }
 }
 
-Button.prototype.adjustSize = function() {
+Button.prototype.adjust = function() {
     ctx.font = this.font
     const m = ctx.measureText(this.text)
     const requestW = m.width + this.hspace*2
@@ -77,9 +74,7 @@ Button.prototype.onMouseMove = function() {}
 
 Button.prototype.getState = function() {
     if (this.disabled) return 'disabled'
-    if (this.toggled) {
-        return 'toggled'
-    }
+    if (this.toggled) return 'toggled'
     if (this._hover) return 'hover'
     return 'active'
 }
