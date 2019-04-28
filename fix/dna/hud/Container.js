@@ -47,7 +47,7 @@ Container.prototype.moveOnTop = function(i) {
     }
 }
 
-Container.prototype.onClick = function(x, y, b, e) {
+Container.prototype.onClick = function(x, y, e) {
     //if (x < 0 || y < 0 || x > this.w || y > this.h) return
     //log.debug('click on [' + this.name + '] @' + x + 'x' + y)
 
@@ -80,7 +80,7 @@ Container.prototype.onClick = function(x, y, b, e) {
     }
 }
 
-Container.prototype.onDblClick = function(x, y, b, e) {
+Container.prototype.onDblClick = function(x, y, e) {
     this._ls.forEach(g => {
         if (g.hidden || g.disabled) return
 

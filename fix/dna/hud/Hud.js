@@ -27,13 +27,13 @@ let Hud = function(dat) {
     sys.after(trap, 'click', function(e) {
         let x = e.pageX - hud.x
         let y = e.pageY - hud.y
-        hud.onClick(x, y, e.button, e)
+        hud.onClick(x, y, e)
     })
 
     sys.after(trap, 'dblClick', function(e) {
         let x = e.pageX - hud.x
         let y = e.pageY - hud.y
-        hud.onDblClick(x, y, e.button, e)
+        hud.onDblClick(x, y, e)
     })
 
     sys.after(trap, 'mouseUp', function(e) {
