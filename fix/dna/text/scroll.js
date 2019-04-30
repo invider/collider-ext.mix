@@ -1,6 +1,7 @@
 /** @alias lab.scroll */
 module.exports = function(init) {
     let res = {
+        alive: true,
         timer: 0,
         dtimer: 1,
         line: 0,
