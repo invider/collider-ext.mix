@@ -72,8 +72,14 @@ NodeList.prototype = Object.create(DynamicList.prototype)
 NodeList.prototype.onKeyDown = function(e) {
     if (e.key === 'Enter' && e.shiftKey) {
         if (this.selected >= 0) this.onItemAction(this.selected, 3);
+    } else if (e.key === 'Backspace') {
+        if (this.__.trail.length > 0) {
+            this.__.dir = this.__.trail.pop()
+            this.__.pane.updatePath()
+        }
+    } else if (e.key === '\\') {
+        console.dir(this.__.dir)
     } else if (e.key === 'Escape') {
-        log.out('exiting')
         this.__.detach()
     } else {
         DynamicList.prototype.onKeyDown.call(this, e)
@@ -90,7 +96,8 @@ NodeList.prototype.updatePath = function() {
         if (name === '/') name = ''
         path = name + '/' + path
     }
-    this.__.status = path
+    if (path === 'anonymous') this.__.status = ''
+    else this.__.status = path
 }
 
 NodeList.prototype.item = function(i, d) {
@@ -126,7 +133,8 @@ NodeList.prototype.item = function(i, d) {
         } else {
             return {
                 key: keys[i-sh],
-                name: nodeTitle(dir[keys[i-sh]], dir, i-sh, keys[i-sh]),
+                name: keys[i-sh],
+                //name: nodeTitle(dir[keys[i-sh]], dir, i-sh, keys[i-sh]),
                 node: dir[keys[i-sh]],
             }
         }
@@ -146,6 +154,7 @@ NodeList.prototype.onItemAction = function(i, action) {
                 sel = this.lastSelect.pop()
             }
 
+            this.__.trail.push(this.__.dir)
             this.__.dir = this.__.dir.__
             this.pos = pos
             this.selected = sel
@@ -167,6 +176,7 @@ NodeList.prototype.onItemAction = function(i, action) {
                 h: this.__.h,
             })
             this.__.__.attach(expl)
+            expl.trail.push(expl.dir)
             expl.dir = next
             expl.pane.updatePath()
         }
@@ -179,11 +189,17 @@ NodeList.prototype.onItemAction = function(i, action) {
             this.pos = 0
             this.selected = 0
             this.slider.pos = 0
+            this.__.trail.push(this.__.dir)
             if (sys.isFrame(next)) {
                 this.__.dir = next
                 this.max = next._ls.length
             } else if (sys.isObj(next)) {
                 // normalize first
+                this.__.dir = next
+                this.max = 0
+                for (let k in next) this.max++
+                /*
+                // Why did I make that?
                 this.__.dir = {
                     _dir: {},
                     _ls: [],
@@ -197,13 +213,13 @@ NodeList.prototype.onItemAction = function(i, action) {
                     }
                 })
                 this.max = this.__.dir._ls.length
+                */
             }
             this.updatePath()
             this.adjust()
         } else {
             log.out(next)
             log.dump(next)
-            log.out('not explorable')
         }
     }
 }
@@ -265,7 +281,8 @@ const defaults = {
     y: 0,
     w: 200,
     h: 200,
-    dir: _._$
+    dir: _._$,
+    trail: [],
 }
 
 let instances = 0
