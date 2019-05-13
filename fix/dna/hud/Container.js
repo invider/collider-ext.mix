@@ -78,6 +78,7 @@ Container.prototype.onClick = function(x, y, e) {
             //}
         }
     }
+    return !pending
 }
 
 Container.prototype.onDblClick = function(x, y, e) {
@@ -120,6 +121,7 @@ Container.prototype.onMouseDown = function(x, y, b, e) {
             this.releaseFocus(g)
         }
     }
+    return !pending
 }
 
 Container.prototype.onMouseUp = function(x, y, b, e) {
@@ -220,7 +222,7 @@ Container.prototype.drawBackground = function() {
     }
 }
 
-Container.prototype.drawComponents = function() {
+Container.prototype.drawContent = function() {
     //for (let i = this._ls.length - 1; i >= 0; i--) {
     for (let i = 0; i < this._ls.length; i++) {
         let e = this._ls[i]
@@ -243,7 +245,7 @@ Container.prototype.draw = function() {
     }
 
     this.drawBackground()
-    this.drawComponents()
+    this.drawContent()
     this.drawForeground()
 
     ctx.restore()

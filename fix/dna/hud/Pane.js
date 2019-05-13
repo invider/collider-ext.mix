@@ -8,11 +8,9 @@ const Pane = function(st) {
     sys.augment(this, st)
 }
 
-Pane.prototype.drawBackground = function() {
-} 
+Pane.prototype.drawBackground = function() {} 
 
-Pane.prototype.drawContent = function() {
-}
+Pane.prototype.drawContent = function() {}
 
 Pane.prototype.draw = function() {
     if (this.hidden) return

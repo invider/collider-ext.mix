@@ -98,7 +98,7 @@ Hud.prototype.onMouseDown = function(x, y, b, e) {
     this.captured.forEach(g => {
         if (sys.isFun(g.onMouseDown)) g.onMouseDown(x, y, e)
     })
-    Container.prototype.onMouseDown.call(this, x, y, e)
+    return Container.prototype.onMouseDown.call(this, x, y, e)
 }
 
 Hud.prototype.onMouseUp = function(x, y, b, e) {
@@ -153,7 +153,7 @@ Hud.prototype.releaseMouse = function() {
 Hud.prototype.captureFocus = function(gadget) {
     if (this.focused.indexOf(gadget) < 0) {
         gadget.focus = true
-        gadget.onFocus()
+        if (sys.isFun(gadget.onFocus)) gadget.onFocus()
         this.focused.push(gadget)
     }
 }

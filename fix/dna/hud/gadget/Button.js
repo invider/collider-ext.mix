@@ -3,7 +3,9 @@
 let instances = 0
 const Button = function(dat) {
     this.name = 'button_' + ++instances
-    this.text = 'Button ' + instances
+    if (!this.text && !this.text === '') {
+        this.text = 'Button ' + instances
+    }
     this.disabled = false
     this.toggled = false
 
@@ -17,8 +19,8 @@ const Button = function(dat) {
     this.font = env.hud.font
     this.fontHeight = env.hud.baseHeight
 
-    sys.augment(this, dat)
     this.injectStyle('button')
+    sys.augment(this, dat)
     this.adjust()
 }
 

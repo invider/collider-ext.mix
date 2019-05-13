@@ -1,7 +1,7 @@
 'use strict'
 
-//@depends(/dna/hud/gadget/Window)
-const Window = dna.hud.gadget.Window
+//@depends(/dna/hud/Window)
+const Window = dna.hud.Window
 //@depends(/dna/hud/gadget/DynamicList)
 const DynamicList = dna.hud.gadget.DynamicList
 
@@ -115,7 +115,12 @@ NodeList.prototype.item = function(i, d) {
             }
         }
     } else if (sys.isObj(dir)) {
-        const keys = Object.keys(dir)
+        //const keys = Object.keys(dir)
+        const keys = []
+        for (let k in dir) {
+            keys.push(k)
+        }
+
         if (i < 0) {
             return keys.length + sh
         } else {

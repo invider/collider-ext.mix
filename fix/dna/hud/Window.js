@@ -13,6 +13,9 @@ const defaults = {
     minifiable: true,
     closable: true,
 
+    title: '',
+    status: '',
+
     font: env.hud.font,
     baseHeight: env.hud.baseHeight,
     color: {
@@ -81,6 +84,7 @@ Bar.prototype.onFocus = function() {
 
 const Stretch = function(dat) {
     this.name = 'stretch'
+    this.keepZ = true
     sys.augment(this, { x: 0, y: 0, w: 0, h: 0 })
     sys.augment(this, dat)
 }
@@ -117,6 +121,7 @@ Stretch.prototype.onDblClick = function(dx, dy) {
 
 const Close = function(dat) {
     this.name = 'close'
+    this.keepZ = true
     sys.augment(this, { x: 0, y: 0, w: 0, h: 0 })
     sys.augment(this, dat)
 }
@@ -151,13 +156,18 @@ const Window = function(dat) {
     this.attach(new Bar())
     if (this.resizable) this.attach(new Stretch())
     if (this.closable) this.attach(new Close())
-    this.attach(new Container({
-        name: 'pane',
-        attach: function(node, name) {
-            Container.prototype.attach.call(this, node, name)
-        },
-        transparent: true
-    }))
+
+    if (dat.pane) {
+        this.attach(dat.pane, 'pane')
+    } else {
+        this.attach(new Container({
+            name: 'pane',
+            attach: function(node, name) {
+                Container.prototype.attach.call(this, node, name)
+            },
+            transparent: true
+        }))
+    }
     this.adjust()
 }
 Window.prototype = Object.create(Container.prototype)
@@ -210,7 +220,7 @@ Window.prototype.adjust = function() {
         this.close.y = 0
         this.close.h = this.tag.h
         this.close.w = this.close.h
-        this.close.x = this.w - this.bar.h
+        this.close.x = this.w - this.tag.h
     }
 
     this.bar.x = 0
