@@ -1,4 +1,4 @@
-'use strict'
+//'use strict'
 
 //@depends(/dna/hud/Window)
 const Window = dna.hud.Window
@@ -78,7 +78,7 @@ NodeList.prototype.onKeyDown = function(e) {
             this.__.pane.updatePath()
         }
     } else if (e.key === '\\') {
-        console.dir(this.__.dir)
+        log.dump(this.__.dir)
     } else if (e.key === 'Escape') {
         this.__.detach()
     } else {
@@ -159,7 +159,7 @@ NodeList.prototype.onItemAction = function(i, action) {
             this.pos = pos
             this.selected = sel
             this.slider.pos = pos
-            this.max = this.__.dir._ls.length
+            //this.max = this.__.dir._ls.length
             this.updatePath()
             this.adjust()
         }
@@ -192,11 +192,11 @@ NodeList.prototype.onItemAction = function(i, action) {
             this.__.trail.push(this.__.dir)
             if (sys.isFrame(next)) {
                 this.__.dir = next
-                this.max = next._ls.length
+                //this.max = next._ls.length
             } else if (sys.isObj(next)) {
                 // normalize first
                 this.__.dir = next
-                this.max = 0
+                //this.max = 0
                 for (let k in next) this.max++
                 /*
                 // Why did I make that?
