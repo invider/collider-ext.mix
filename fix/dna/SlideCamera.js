@@ -42,6 +42,23 @@ SlideCamera.prototype.inView = function(x, y) {
     return (sx >= 0 && sx <= ctx.width && sy >= 0 && sy <= ctx.height)
 }
 
+SlideCamera.prototype.pick = function(screenX, screenY) {
+    let wx = this.worldX(screenX)
+    let wy = this.worldY(screenY)
+
+    let res = []
+    this._ls.forEach( e => {
+        if (e.draw && !e.dead && !e.hidden && e._sizable
+                && e.x <= wx
+                && e.x + e.w >= wx
+                && e.y <= wy
+                && e.y + e.h >= wy) {
+            res.push(e)
+        }
+    })
+    return res
+}
+
 SlideCamera.prototype.init = function(dt) {
     let cam = this
     sys.after(trap, 'equalDown', function() {
@@ -72,11 +89,11 @@ SlideCamera.prototype.follow = function(dt) {
 }
 
 SlideCamera.prototype.evo = function(dt) {
-    if (this.target) this.follow(dt)
-
     this._ls.forEach( e => {
         if (e.evo && !e.dead && !e.paused) e.evo(dt)
     })
+
+    if (this.target) this.follow(dt)
 }
 
 SlideCamera.prototype.draw = function(dt) {
