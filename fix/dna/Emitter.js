@@ -146,6 +146,7 @@ Emitter.prototype.evo = function(dt) {
 
     if (pn === 0 && this.lifespan === 0) {
         this.dead = true
+        kill(this)
     }
 }
 
