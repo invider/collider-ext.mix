@@ -66,9 +66,6 @@ module.exports = {
         ctx.fillStyle = base
         ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-        fill('#ffffff')
-        text('state: ' + state, ctx.width/2, 100)
-
         if (state === 'wait' || state === 'self-destruct') return
 
         ctx.save()
