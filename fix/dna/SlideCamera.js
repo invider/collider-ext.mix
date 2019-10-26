@@ -5,6 +5,7 @@ let SlideCamera = function(dat) {
     this.target = false
     this.targetingPrecision = 1
     this.speed = 1
+    this.zoomOnPlusMinus = false
 
     sys.Frame.call(this, dat)
 }
@@ -59,7 +60,7 @@ SlideCamera.prototype.pick = function(screenX, screenY) {
     return res
 }
 
-SlideCamera.prototype.init = function(dt) {
+SlideCamera.prototype.bindZoom = function() {
     let cam = this
     sys.after(trap, 'equalDown', function() {
         cam.zoom(1.2)
@@ -67,6 +68,10 @@ SlideCamera.prototype.init = function(dt) {
     sys.after(trap, 'minusDown', function() {
         cam.zoom(0.8)
     })
+}
+
+SlideCamera.prototype.init = function() {
+    if (this.zoomOnPlusMinus) this.bindZoom()
 }
 
 SlideCamera.prototype.zoom = function(z) {
