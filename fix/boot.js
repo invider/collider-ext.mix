@@ -3,9 +3,10 @@
 let base = '#151208'
 let content = '#a05020'
 let contentLow = '#402010'
+let fadeBase = '#000000'
 
 let hold = 1
-let fade = 0.5
+let fade = 1
 let wait = 0.5
 
 let time = 0
@@ -22,6 +23,7 @@ module.exports = {
             base = bt.base || base
             content = bt.content || content
             contentLow = bt.contentLow || contentLow
+            fadeBase = bt.fadeBase || fadeBase
         }
     },
 
@@ -62,16 +64,14 @@ module.exports = {
     },
 
     draw: function() {
-        // clear the screen
-        ctx.fillStyle = base
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-        if (state === 'wait' || state === 'self-destruct') return
+        if (state === 'wait' || state === 'self-destruct') {
+            background(fadeBase)
+            return
+        }
 
         ctx.save()
-        if (state === 'fade') {
-            ctx.globalAlpha = 1 - time/fade
-        }
+        background(base)
 
         let loaded = this._.___.res._loaded
         let included = this._.___.res._included
@@ -103,6 +103,10 @@ module.exports = {
         ctx.fillStyle = content
         ctx.fillText('Powered by Collider.JAM', ctx.width/2, ctx.height - 50)
 
+        if (state === 'fade') {
+            ctx.globalAlpha = time/fade
+            background(fadeBase)
+        }
 
         ctx.restore()
     }
