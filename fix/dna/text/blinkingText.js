@@ -1,3 +1,16 @@
+//
+// blinking text factory
+//
+// create by passing the construction object: {
+//     font: text font, e.g. '32px zekton'
+//     align: text alignment against coordinates (left/right/center)
+//     fillStyle: the color string for the text, e.g. '#ffffff'
+//     x: y: coordinates
+//         or as an alternative
+//     rx: ry: relative coordinates in percents,
+//             e.g. 50x50 for the screen center
+// }
+//
 let BlinkingText = function(dat) {
     this.align ="center";
     this.font = '72px zekton'
@@ -25,4 +38,3 @@ BlinkingText.prototype.draw = function() {
 module.exports = function(dat) {
     return new BlinkingText(dat)
 }
-

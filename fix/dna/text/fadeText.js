@@ -1,3 +1,4 @@
+// create a text with fade-in/fade-out and flying effects
 let FadeText = function(dat) {
     this.alive = true
     this.time = 0

@@ -1,3 +1,6 @@
+//
+// create a text with fade-in/fade-out and flying effects
+//
 /** @alias lab.scroll */
 module.exports = function(init) {
     let res = {

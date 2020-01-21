@@ -1,3 +1,4 @@
+// construct tiles from image map
 let Tiles = function(dat) {
     this.x = 0
     this.y = 0

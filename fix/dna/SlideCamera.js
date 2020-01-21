@@ -1,3 +1,6 @@
+//
+// target-following zoom in/out camera constructor
+//
 let SlideCamera = function(dat) {
     this.x = 0
     this.y = 0

@@ -1,3 +1,9 @@
+//
+// create a debug grid
+//
+// Useful for exploring camera positioning/zooming
+// or positioning of entities
+//
 let Grid = function(dat) {
     this.color = '#40ff00'
     this.font = '14px zekton'

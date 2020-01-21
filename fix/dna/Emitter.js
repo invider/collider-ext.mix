@@ -1,3 +1,6 @@
+//
+// particle emitter constructor
+//
 let FADEOUT = 0.3 // default particle fadeout value
 
 let Particle = function(dat) {
